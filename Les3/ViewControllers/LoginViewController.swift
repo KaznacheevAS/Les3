@@ -13,26 +13,33 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTF: UITextField!
     
     // MARK: Не укказал что контстанта приватная должна быть
-    private let user = "User"
-    private let password = "Password"
+    private let user = User.getUserData()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //nameTF.text = user
-        //passwordTF.text = password
+        nameTF.text = user.login
+        passwordTF.text = user.password
     }
 
     // MARK: Prepare WelcomVC
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let WelcomVC = segue.destination as? WelcomeViewController else { return }
-        WelcomVC.text = nameTF.text
+        guard let barTabBarController = segue.destination as? UITabBarController else {  return }
+        guard let viewController = barTabBarController.viewControllers else { return }
+        viewController.forEach{
+            if let welcomVC = $0 as? WelcomeViewController {
+                welcomVC.user = user
+            } else if let navigationVC = $0 as? UINavigationController {
+                let imgVC = navigationVC.topViewController as? ImagesViewController
+                imgVC?.user = user
+            }
+        }
     }
     
     @IBAction func loginPass() {
-        if nameTF.text != user || passwordTF.text != password {
+        if nameTF.text != user.login || passwordTF.text != user.password {
             setAlert(
                     title: "Error!",
-                    message: "Не заолненно корректно одно из полей: User is Password!",
+                    message: "Не заолненно корректно одно из полей: \(user.login) is \(user.password)!",
                     textField: passwordTF // удвление поля с паролем если не коректно заполненны данные
             )
             return
@@ -41,9 +48,9 @@ class LoginViewController: UIViewController {
     
     @IBAction func getForgot(_ sender: UIButton) {
         switch sender.tag {
-        case 0: setAlert(title: "Forgot User:", message: "is User")
+        case 0: setAlert(title: "Forgot User:", message: "is \(user.login)")
             break
-        default: setAlert(title: "Forgot Password:", message: "is Password")
+        default: setAlert(title: "Forgot Password:", message: "is \(user.password)")
             break
         }
     }

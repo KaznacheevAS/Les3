@@ -11,11 +11,11 @@ class WelcomeViewController: UIViewController {
 
     @IBOutlet weak var textLabel: UILabel!
     
-    var text: String!
+    var user: User!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        textLabel.text =  "Welcom \(text ?? "no User")!"
+        textLabel.text =  "Welcom \(user.person.descriptor)!"
     }
 
     @IBAction func censelLog() {
